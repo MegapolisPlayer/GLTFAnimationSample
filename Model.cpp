@@ -384,6 +384,8 @@ void Model::draw(const glm::mat4& aProjectionView) noexcept {
 		this->updateJoints(this->mNodes[id], jointMatrices);
 	}
 
+	std::cout << "Size of JM " << jointMatrices.size() << '\n';
+
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->mJointMatrixBuffer);
 	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, jointMatrices.size()*sizeof(glm::mat4), jointMatrices.data());
 
