@@ -206,6 +206,7 @@ Model::Model(const std::filesystem::path& aPath) noexcept {
 				fastgltf::Accessor& verticesAccess = model->accessors[p.findAttribute("POSITION")->accessorIndex];
 				vertices.resize(vertices.size() + verticesAccess.count);
 				fastgltf::iterateAccessorWithIndex<glm::vec3>(*model, verticesAccess, [&](glm::vec3 aV, GLuint aId) {
+					assert(initialId+aId < vertices.size());
 					vertices[initialId+aId].position = aV;
 					vertices[initialId+aId].materialId = matIndex;
 				});
@@ -213,44 +214,54 @@ Model::Model(const std::filesystem::path& aPath) noexcept {
 
 			//normals
 			{
-				fastgltf::Accessor& normalAccess = model->accessors[p.findAttribute("NORMAL")->accessorIndex];
-				fastgltf::iterateAccessorWithIndex<glm::vec3>(*model, normalAccess, [&](glm::vec3 aV, GLuint aId) {
-					vertices[initialId+aId].normal = aV;
-				});
+				if(p.findAttribute("NORMAL") != p.attributes.end()) {
+					fastgltf::Accessor& normalAccess = model->accessors[p.findAttribute("NORMAL")->accessorIndex];
+					fastgltf::iterateAccessorWithIndex<glm::vec3>(*model, normalAccess, [&](glm::vec3 aV, GLuint aId) {
+						assert(initialId+aId < vertices.size());
+						vertices[initialId+aId].normal = aV;
+					});
+				}
 			}
 
 			//UVs
 			{
-				fastgltf::Accessor& uvAccess = model->accessors[p.findAttribute("TEXCOORD_0")->accessorIndex];
-				fastgltf::iterateAccessorWithIndex<glm::vec2>(*model, uvAccess, [&](glm::vec2 aV, GLuint aId) {
-					vertices[initialId+aId].texCoords.x = aV.x;
-					vertices[initialId+aId].texCoords.y = 1.0 - aV.y; //flipping UVs Y simpler than flipping every image!
-				});
+				if(p.findAttribute("TEXCOORD_0") != p.attributes.end()) {
+					fastgltf::Accessor& uvAccess = model->accessors[p.findAttribute("TEXCOORD_0")->accessorIndex];
+					fastgltf::iterateAccessorWithIndex<glm::vec2>(*model, uvAccess, [&](glm::vec2 aV, GLuint aId) {
+						assert(initialId+aId < vertices.size());
+						vertices[initialId+aId].texCoords.x = aV.x;
+						vertices[initialId+aId].texCoords.y = 1.0 - aV.y; //flipping UVs Y simpler than flipping every image!
+					});
+				}
 			}
 
 			//joints
 			{
-				fastgltf::Accessor& jointsAccess = model->accessors[p.findAttribute("JOINTS_0")->accessorIndex];
 				if(p.findAttribute("JOINTS_0") != p.attributes.end()) {
-					fastgltf::iterateAccessorWithIndex<fastgltf::math::u8vec4>(*model, jointsAccess, [&](fastgltf::math::u8vec4 aV, GLuint aId) {
-						vertices[initialId+aId].boneIds[0] = aV.x()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
-						vertices[initialId+aId].boneIds[1] = aV.y()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
-						vertices[initialId+aId].boneIds[2] = aV.z()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
-						vertices[initialId+aId].boneIds[3] = aV.w()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
-					});
+					fastgltf::Accessor& jointsAccess = model->accessors[p.findAttribute("JOINTS_0")->accessorIndex];
+					if(p.findAttribute("JOINTS_0") != p.attributes.end()) {
+						fastgltf::iterateAccessorWithIndex<fastgltf::math::u8vec4>(*model, jointsAccess, [&](fastgltf::math::u8vec4 aV, GLuint aId) {
+							vertices[initialId+aId].boneIds[0] = aV.x()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
+							vertices[initialId+aId].boneIds[1] = aV.y()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
+							vertices[initialId+aId].boneIds[2] = aV.z()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
+							vertices[initialId+aId].boneIds[3] = aV.w()+this->mNodes[meshNodeAccess[meshNodeAccessorId]].jointsIdOffset;
+						});
+					}
 				}
 			}
 
 			//weights
 			{
-				fastgltf::Accessor& jointsAccess = model->accessors[p.findAttribute("WEIGHTS_0")->accessorIndex];
 				if(p.findAttribute("WEIGHTS_0") != p.attributes.end()) {
-					fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(*model, jointsAccess, [&](fastgltf::math::fvec4 aV, GLuint aId) {
-						vertices[initialId+aId].boneWeights[0] = aV.x();
-						vertices[initialId+aId].boneWeights[1] = aV.y();
-						vertices[initialId+aId].boneWeights[2] = aV.z();
-						vertices[initialId+aId].boneWeights[3] = aV.w();
-					});
+					fastgltf::Accessor& jointsAccess = model->accessors[p.findAttribute("WEIGHTS_0")->accessorIndex];
+					if(p.findAttribute("WEIGHTS_0") != p.attributes.end()) {
+						fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(*model, jointsAccess, [&](fastgltf::math::fvec4 aV, GLuint aId) {
+							vertices[initialId+aId].boneWeights[0] = aV.x();
+							vertices[initialId+aId].boneWeights[1] = aV.y();
+							vertices[initialId+aId].boneWeights[2] = aV.z();
+							vertices[initialId+aId].boneWeights[3] = aV.w();
+						});
+					}
 				}
 			}
 		}
@@ -382,6 +393,7 @@ void Model::draw(const glm::mat4& aProjectionView) noexcept {
 	for(Mesh& m : this->mMeshes) m.draw(aProjectionView);
 }
 void Model::setStateAtTime(float aTime) noexcept {
-	for(Animation& a : this->mAnimations) a.setStateAtTime(*this, aTime);
+	 this->mAnimations[0].setStateAtTime(*this, aTime);
+	//for(Animation& a : this->mAnimations) a.setStateAtTime(*this, aTime);
 }
 Model::~Model() noexcept {}

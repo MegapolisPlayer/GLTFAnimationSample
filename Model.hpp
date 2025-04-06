@@ -34,6 +34,7 @@ public:
 	Model(const std::filesystem::path& aPath) noexcept;
 	void draw(const glm::mat4& aProjectionView) noexcept;
 	void setStateAtTime(float aTime) noexcept;
+
 	~Model() noexcept;
 private:
 	std::vector<uint64_t> mRootNodes;

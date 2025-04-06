@@ -35,6 +35,8 @@ static float CameraXOffset = 0.0f;
 static float CameraYOffset = 0.0f;
 static float CameraZOffset = 0.0f;
 
+static float SPEED = 0.05;
+
 void KeyCallback(GLFWwindow* aWindow, int aKey, int aScancode, int aAction, int aModifiers) {
 	if(aAction == GLFW_RELEASE || glfwGetInputMode(aWindow, GLFW_CURSOR) == GLFW_CURSOR_NORMAL) return;
 
@@ -43,22 +45,22 @@ void KeyCallback(GLFWwindow* aWindow, int aKey, int aScancode, int aAction, int 
 			glfwSetInputMode(aWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			break;
 		case GLFW_KEY_W:
-			CameraZOffset -= 0.05f;
+			CameraZOffset -= SPEED;
 			break;
 		case GLFW_KEY_A:
-			CameraXOffset -= 0.05f;
+			CameraXOffset -= SPEED;
 			break;
 		case GLFW_KEY_S:
-			CameraZOffset += 0.05f;
+			CameraZOffset += SPEED;
 			break;
 		case GLFW_KEY_D:
-			CameraXOffset += 0.05f;
+			CameraXOffset += SPEED;
 			break;
 		case GLFW_KEY_R:
-			CameraYOffset += 0.05f;
+			CameraYOffset += SPEED;
 			break;
 		case GLFW_KEY_F:
-			CameraYOffset -= 0.05f;
+			CameraYOffset -= SPEED;
 			break;
 		case GLFW_KEY_Q:
 			CameraXOffset = 0.0f;
@@ -172,7 +174,7 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 450 core");
 
-	Model m(std::filesystem::path("./Untitled2.glb"));
+	Model m(std::filesystem::path("./FoxRE.glb"));
 
 	GLint samplers[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -192,7 +194,7 @@ int main() {
 	glm::mat4 matrix;
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians((float)FOV), 800.0f/800.0f, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians((float)FOV), 800.0f/800.0f, 0.1f, 1000.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 
 	bool renderBase = false;
@@ -214,7 +216,7 @@ int main() {
 		matrix = proj * view * model;
 
 		if(!overrideAnimTime) {
-			animTime = std::fmod(glfwGetTime(), 1.5);
+			animTime = std::fmod(glfwGetTime(), 1.0);
 		}
 		m.setStateAtTime(animTime);
 
@@ -230,6 +232,7 @@ int main() {
 
 		//gui for control and debugging
 		ImGui::Begin("Anim control");
+		ImGui::SliderFloat("Speed of camera", &SPEED, 0, 1.0);
 		ImGui::Checkbox("Render base model", &renderBase);
 		ImGui::Checkbox("Override time", &overrideAnimTime);
 		ImGui::SliderFloat("Anim seconds", &animTime, 0, 3.3333);
