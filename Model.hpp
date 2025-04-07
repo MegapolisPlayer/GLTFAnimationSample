@@ -5,6 +5,7 @@
 
 struct Node {
 	std::string name;
+	glm::mat4 animationMatrix;
 	glm::mat4 localMatrix;
 	glm::mat4 transformMatrix;
 	int64_t idOfSkin;
@@ -32,8 +33,11 @@ class Model {
 	friend class Animation;
 public:
 	Model(const std::filesystem::path& aPath) noexcept;
+
 	void draw(const glm::mat4& aProjectionView) noexcept;
-	void setStateAtTime(float aTime) noexcept;
+	void setStateAtTime(uint64_t aId, float aTime) noexcept;
+
+	uint64_t getAnimationAmount() const noexcept;
 
 	~Model() noexcept;
 private:

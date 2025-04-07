@@ -20,19 +20,11 @@ void main() {
 	//copied from https://www.khronos.org/files/gltf20-reference-guide.pdf page 6 bottom right
 	//unused bones will have weight 0
 
-	mat4 skinMatrix;
-	float totalWeight = BoneWeights.x+BoneWeights.y+BoneWeights.z+BoneWeights.w;
-	//as reasonably close to 1 as per GLTF
-	if(totalWeight > 0.95) {
-		skinMatrix =
+	mat4 skinMatrix =
 		BoneWeights.x * uJoints[int(BoneIds.x)] +
 		BoneWeights.y * uJoints[int(BoneIds.y)] +
 		BoneWeights.z * uJoints[int(BoneIds.z)] +
 		BoneWeights.w * uJoints[int(BoneIds.w)];
-	}
-	else {
-		skinMatrix = mat4(1.0);
-	}
 
 	gl_Position = uMatrix * skinMatrix * vec4(Position, 1.0);
 	pTexCoord = TexCoord;

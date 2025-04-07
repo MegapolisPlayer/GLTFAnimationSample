@@ -384,8 +384,6 @@ void Model::draw(const glm::mat4& aProjectionView) noexcept {
 		this->updateJoints(this->mNodes[id], jointMatrices);
 	}
 
-	std::cout << "Size of JM " << jointMatrices.size() << '\n';
-
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->mJointMatrixBuffer);
 	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, jointMatrices.size()*sizeof(glm::mat4), jointMatrices.data());
 
@@ -394,8 +392,13 @@ void Model::draw(const glm::mat4& aProjectionView) noexcept {
 
 	for(Mesh& m : this->mMeshes) m.draw(aProjectionView);
 }
-void Model::setStateAtTime(float aTime) noexcept {
-	 this->mAnimations[0].setStateAtTime(*this, aTime);
-	//for(Animation& a : this->mAnimations) a.setStateAtTime(*this, aTime);
+
+//BUG when changing animations doesnt work!
+
+void Model::setStateAtTime(uint64_t aId, float aTime) noexcept {
+	 this->mAnimations[aId].setStateAtTime(*this, aTime);
+}
+uint64_t Model::getAnimationAmount() const noexcept {
+	return this->mAnimations.size();
 }
 Model::~Model() noexcept {}

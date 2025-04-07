@@ -174,7 +174,7 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 450 core");
 
-	Model m(std::filesystem::path("./FoxRE.glb"));
+	Model m(std::filesystem::path("./t3d1.glb"));
 
 	GLint samplers[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -192,7 +192,6 @@ int main() {
 	glUniform1iv(16, 32, &samplers[0]);
 
 	glm::mat4 matrix;
-	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians((float)FOV), 800.0f/800.0f, 0.1f, 1000.0f);
 	glm::mat4 view = glm::mat4(1.0f);
@@ -200,6 +199,7 @@ int main() {
 	bool renderBase = false;
 	bool overrideAnimTime = false;
 	float animTime = 0.0;
+	int animId = 0;
     while (!glfwWindowShouldClose(window)) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -212,13 +212,12 @@ int main() {
 		glm::vec3 camera_pos = glm::vec3(CameraXOffset, CameraYOffset, CameraZOffset);
 		view = glm::lookAt(camera_pos, camera_pos + Direction, glm::vec3(0.0, 1.0, 0.0));
 
-		model = glm::mat4(1.0f);
-		matrix = proj * view * model;
+		matrix = proj * view;
 
 		if(!overrideAnimTime) {
 			animTime = std::fmod(glfwGetTime(), 1.0);
 		}
-		m.setStateAtTime(animTime);
+		m.setStateAtTime(animId, animTime);
 
 		if(renderBase) {
 			//base model
@@ -232,6 +231,8 @@ int main() {
 
 		//gui for control and debugging
 		ImGui::Begin("Anim control");
+		//when changing id everything breaks
+		ImGui::SliderInt("ID of animation", &animId, 0, m.getAnimationAmount()-1);
 		ImGui::SliderFloat("Speed of camera", &SPEED, 0, 1.0);
 		ImGui::Checkbox("Render base model", &renderBase);
 		ImGui::Checkbox("Override time", &overrideAnimTime);
