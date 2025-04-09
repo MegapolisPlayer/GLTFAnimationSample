@@ -10,7 +10,7 @@ void Animation::setStateAtTime(Model& aModel, const float aTime) noexcept {
 	std::vector<TRSData> data;
 	data.reserve(this->mSamplers.size());
 	for(uint64_t i = 0; i < this->mSamplers.size(); i++) {
-		aModel.mNodes[this->mSamplers[i].nodeIndex].localMatrix = aModel.mNodes[this->mSamplers[i].nodeIndex].originalLocalMatrix;
+		aModel.mNodes[this->mSamplers[i].nodeIndex].localMatrix = glm::mat4(1.0);
 		data.push_back(this->getLocalSamplerTransform(i, aTime));
 	}
 
