@@ -5,7 +5,7 @@
 
 struct Node {
 	std::string name;
-	glm::mat4 animationMatrix;
+	glm::mat4 originalLocalMatrix;
 	glm::mat4 localMatrix;
 	glm::mat4 transformMatrix;
 	int64_t idOfSkin;
@@ -19,7 +19,7 @@ struct Node {
 
 	Node() noexcept {};
 	Node(const std::string& aName, const glm::mat4& aGlobal, const glm::mat4& aLocal, const int64_t aIdOfSkin) noexcept
-	: name(aName), transformMatrix(aGlobal), localMatrix(aLocal), idOfSkin(aIdOfSkin) {};
+	: name(aName), transformMatrix(aGlobal), originalLocalMatrix(aLocal), localMatrix(aLocal), idOfSkin(aIdOfSkin) {};
 	~Node() noexcept {};
 };
 

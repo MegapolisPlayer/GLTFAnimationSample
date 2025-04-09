@@ -37,6 +37,8 @@ static float CameraZOffset = 0.0f;
 
 static float SPEED = 0.05;
 
+static bool closeWindow = false;
+
 void KeyCallback(GLFWwindow* aWindow, int aKey, int aScancode, int aAction, int aModifiers) {
 	if(aAction == GLFW_RELEASE || glfwGetInputMode(aWindow, GLFW_CURSOR) == GLFW_CURSOR_NORMAL) return;
 
@@ -68,8 +70,8 @@ void KeyCallback(GLFWwindow* aWindow, int aKey, int aScancode, int aAction, int 
 			CameraZOffset = 0.0f;
 			break;
 		case GLFW_KEY_X:
-			glfwDestroyWindow(aWindow);
-			std::exit(0);
+			closeWindow = true;
+			break;
 	}
 }
 
@@ -136,6 +138,9 @@ int main() {
 	};
 
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
     GLFWwindow* window = glfwCreateWindow(800, 800, "OpenGL 3D", NULL, NULL);
     glfwMakeContextCurrent(window);
@@ -174,7 +179,7 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 450 core");
 
-	Model m(std::filesystem::path("./Untitled.glb"));
+	Model m(std::filesystem::path("./Fox.glb"));
 
 	GLint samplers[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -200,7 +205,7 @@ int main() {
 	bool overrideAnimTime = false;
 	float animTime = 0.0;
 	int animId = 0;
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window) && !closeWindow) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
