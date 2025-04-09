@@ -260,6 +260,9 @@ Model::Model(const std::filesystem::path& aPath) noexcept {
 							vertices[initialId+aId].boneWeights[1] = aV.y();
 							vertices[initialId+aId].boneWeights[2] = aV.z();
 							vertices[initialId+aId].boneWeights[3] = aV.w();
+
+							//sanity check
+							assert(aV.x()+aV.y()+aV.z()+aV.w() > 0.95 || aV.x()+aV.y()+aV.z()+aV.w() == 0.0);
 						});
 					}
 				}
