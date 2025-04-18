@@ -33,6 +33,15 @@ std::ostream& operator<<(std::ostream& aStream, const glm::vec4& aVector) noexce
 	return aStream;
 }
 
+std::ostream& operator<<(std::ostream& aStream, const glm::mat4& aMatrix) noexcept {
+	aStream <<
+	'[' << aMatrix[0][0] << ',' << aMatrix[0][1] << ',' << aMatrix[0][2] << ',' << aMatrix[0][3] << ']' << '\n' <<
+	'|' << aMatrix[1][0] << ',' << aMatrix[1][1] << ',' << aMatrix[1][2] << ',' << aMatrix[1][3] << '|' << '\n' <<
+	'|' << aMatrix[2][0] << ',' << aMatrix[2][1] << ',' << aMatrix[2][2] << ',' << aMatrix[2][3] << '|' << '\n' <<
+	'[' << aMatrix[3][0] << ',' << aMatrix[3][1] << ',' << aMatrix[3][2] << ',' << aMatrix[3][3] << ']' << '\n';
+	return aStream;
+}
+
 glm::mat4 convertToGLM(const fastgltf::math::fmat4x4& aFrom) noexcept {
 	glm::mat4 result;
 

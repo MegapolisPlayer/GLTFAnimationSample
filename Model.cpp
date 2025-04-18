@@ -150,7 +150,7 @@ Model::Model(const std::filesystem::path& aPath) noexcept {
 	std::cout << "Root nodes ";
 	for(size_t nid : model->scenes[model->defaultScene.value()].nodeIndices) {
 		this->mRootNodes.push_back(nid);
-		std::cout << nid << " ";
+		std::cout << nid << "\n";
 	}
 	std::cout << std::endl;
 
@@ -395,8 +395,6 @@ void Model::draw(const glm::mat4& aProjectionView) noexcept {
 
 	for(Mesh& m : this->mMeshes) m.draw(aProjectionView);
 }
-
-//BUG when changing animations doesnt work!
 
 void Model::setStateAtTime(uint64_t aId, float aTime) noexcept {
 	 this->mAnimations[aId].setStateAtTime(*this, aTime);
